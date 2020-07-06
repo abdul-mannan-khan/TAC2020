@@ -14,6 +14,9 @@ This repository provides the preprint of the article
  }
  ```
  
- and associated Matlab code. 
+ and associated Matlab code (tested on MATLAB 2017b). 
  
  Run `./makeit.m` in the root folder to generate the figures in the paper.
+
+## REQUIREMENTS
+[Hybrid Equations Toolbox](https://www.mathworks.com/matlabcentral/fileexchange/41372-hybrid-equations-toolbox-v2-04)
