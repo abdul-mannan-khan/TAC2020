@@ -2,7 +2,7 @@
 
 This repository provides the preprint of the article
 
-'''
+```
 @ARTICLE{Casau2020,
   author={P. {Casau} and R. {Cunha} and R. G. {Sanfelice} and C. {Silvestre}},
   journal={IEEE Transactions on Automatic Control}, 
@@ -12,7 +12,7 @@ This repository provides the preprint of the article
   number={5},
   pages={1870-1885}
  }
- '''
+ ```
  
  and associated Matlab code. 
  
