@@ -1,4 +1,4 @@
-# Hybrid Conntrol for Robust and Global Tracking on Smooth Manifolds
+# Hybrid Control for Robust and Global Tracking on Smooth Manifolds
 
 This repository provides the preprint of the article
 
