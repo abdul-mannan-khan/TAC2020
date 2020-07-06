@@ -1,0 +1,50 @@
+function dxi = F(xi,kappa,FX,TT,DTT,W,PT,DW,charts,Dcharts,n)
+    xr = xi(1:3);
+    wr = xi(4:6);
+    xs = xi(7:9);
+    ws = xi(10:12);
+    q  = xi(13);
+    htt= xi(14:22);
+    dwr = xi(23:25);
+    xs2= xi(26:28);
+    ws2= xi(29:31);
+    q2 = xi(32);
+    xs3= xi(34:36);
+    ws3= xi(37:39);
+    h  = (q+1)/2+1;
+    h2  = (q2+1)/2+1;
+    d2wr= -wr;
+    tt = TT{h}([xr;wr;xs;ws;dwr]);
+    v = FX([xr;wr;xs;ws;dwr]);
+    %continuous controller
+    dxs3 = PT(xs3)*ws3;
+    transfer = xs3'*xr*eye(3)+xs3*xr'-xr*xs3';
+    Dtransfer= (dxs3'*xr+xs3'*v(1:3))*eye(3)+dxs3*xr'+xs3*v(1:3)'-v(1:3)*xs3'-xr*dxs3';
+    noise = -2*PT(xs3)*xr*0;
+    u3 = PT(xs3)*xr-(ws3-transfer*v(1:3))+Dtransfer*v(1:3)+transfer*v(4:6)+noise;
+    dws3 = u3;
+    %hybrid controllers
+    dws = kappa([htt;ws;xs])+noise;
+    dq = 0;    
+    dot_tt = DTT{h}([xr;wr;xs;ws;dwr])*[v;dws;d2wr];
+    wq = W{h}([xr;wr;xs]);
+    dhtt = dot_tt-(htt-tt)+[PT(xs);-eye(3);-eye(3)]*(ws-wq);
+    %dW = DW{h}([xr;wr;xs;ws;dwr;htt])*[v;dws;d2wr;dhtt];
+%     dW = tt(1:3)'*PT(xs)*(ws-wq)+...
+%         (ws-wq)'*(dws-tt(7:9));
+    %dW = tt(1:3)'*PT(xs)*(ws-wq)+(ws-wq)'*(htt(7:9)-PT(xs)'*htt(1:3)-(ws-htt(4:6))-tt(7:9));
+    %dW = (ws-wq)'*(htt(7:9)+PT(xs)'*(tt(1:3)-htt(1:3))-(tt(4:6)-htt(4:6))-tt(7:9))-norm(ws-wq)^2;
+    %dW = (tt-htt)'*[PT(xs);-eye(3);-eye(3)]*(ws-wq)-norm(ws-wq)^2;
+    %dW = (tt-htt)'*[PT(xs);-eye(3);-eye(3)]*(ws-wq)-norm(ws-wq)^2+(tt-htt)'*(dot_tt-dhtt);
+    %dW = (tt-htt)'*(dot_tt-dhtt);
+    %dW = -norm(ws-wq)^2;%-norm(tt-htt)^2;
+    v2 = FX([xr;wr;xs2;ws2;dwr]);
+    tt2 = TT{h2}([xr;wr;xs2;ws2;dwr]);
+    dws2= kappa([tt2;ws2;xs2])+noise;
+    dq2 = 0;
+    %dW = DW{h}([xr;wr;xs2;ws2;dwr;tt2])*[v2;dws2;d2wr;dhtt*0];
+    wq2 = W{h2}([xr;wr;xs2]);
+    %dW = (charts{h2}(xs2)-charts{h2}(xr))'*Dcharts{h2}(xs2)*PT(xs2)*(ws2-wq2)+(ws2-wq2)'*(dws2-tt2(7:9));
+    dW = -norm(ws2-wq2)^2;%-norm(tt-htt)^2;
+    dxi = [v;dws;dq;dhtt;d2wr;v2(7:9);dws2;dq2;dW;dxs3;dws3];
+end
